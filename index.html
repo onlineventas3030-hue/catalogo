@@ -48,9 +48,50 @@
                     <h1 class="text-2xl font-black text-gray-900">Productos Disponibles</h1>
                     <p class="text-sm text-gray-500">Haz tus pedidos de forma rápida y segura con entrega inmediata.</p>
                 </div>
-                <!-- Filtros por categoría -->
-                <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                    <button onclick="filterByCategory('all')" class="category-btn bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium shrink-0 transition">Todos</button>
+            </div>
+
+            <!-- BARRA DE BÚSQUEDA Y SELECTOR EN LISTA DE CATEGORÍAS (SIN BOTONES HORIZONTALES) -->
+            <div class="bg-white p-4 rounded-3xl border border-gray-200/80 shadow-xs space-y-3">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <!-- Campo de búsqueda -->
+                    <div class="relative flex-grow">
+                        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input
+                            type="text"
+                            id="search-input"
+                            oninput="handleSearch(this.value)"
+                            placeholder="Buscar productos por nombre o descripción..."
+                            class="w-full bg-gray-50 hover:bg-white border border-gray-200 pl-10 pr-9 py-2.5 rounded-2xl text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
+                        >
+                        <button
+                            id="search-clear-btn"
+                            onclick="clearSearch()"
+                            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 bg-gray-200 rounded-full w-5 h-5 flex items-center justify-center text-xs cursor-pointer"
+                        >
+                            &times;
+                        </button>
+                    </div>
+
+                    <!-- Selector en lista para categorías -->
+                    <div class="relative w-full sm:w-72 shrink-0">
+                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-600">
+                            <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <select
+                            id="category-select"
+                            onchange="filterByCategory(this.value)"
+                            class="w-full bg-gray-50 hover:bg-white border border-gray-200 pl-9 pr-9 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 appearance-none transition cursor-pointer"
+                        >
+                            <option value="all">Todas las categorías</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Resumen de filtros -->
+                <div id="filter-summary" class="hidden flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-gray-500">
+                    <span id="filter-count-text">Mostrando productos filtrados</span>
+                    <button onclick="resetAllFilters()" class="text-emerald-700 hover:underline font-bold cursor-pointer">Restablecer filtros</button>
                 </div>
             </div>
 
@@ -65,7 +106,7 @@
             <div class="flex items-center justify-between border-b pb-4">
                 <div>
                     <h1 class="text-2xl font-black text-gray-900">Panel de Administración</h1>
-                    <p class="text-sm text-gray-500">Gestión de inventario y pedidos entrantes en tiempo real.</p>
+                    <p class="text-sm text-gray-500">Gestión de inventario, categorías y pedidos entrantes en tiempo real.</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="switchView('catalog')" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition cursor-pointer">Salir al Catálogo</button>
@@ -73,11 +114,14 @@
                 </div>
             </div>
 
-            <div class="flex space-x-2 border-b border-gray-200">
-                <button onclick="switchAdminTab('orders')" id="tab-orders-btn" class="py-2 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer">Pedidos Entrantes</button>
-                <button onclick="switchAdminTab('inventory')" id="tab-inventory-btn" class="py-2 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer">Gestionar Inventario</button>
+            <!-- Pestañas del Panel Admin -->
+            <div class="flex space-x-2 border-b border-gray-200 overflow-x-auto scrollbar-none">
+                <button onclick="switchAdminTab('orders')" id="tab-orders-btn" class="py-2.5 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer shrink-0">Pedidos Entrantes</button>
+                <button onclick="switchAdminTab('inventory')" id="tab-inventory-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer shrink-0">Gestionar Productos</button>
+                <button onclick="switchAdminTab('categories')" id="tab-categories-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer shrink-0">Gestionar Categorías</button>
             </div>
 
+            <!-- Sección Pedidos -->
             <div id="admin-orders-section" class="space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-lg text-gray-800">Monitoreo de Pedidos en Vivo</h3>
@@ -90,6 +134,7 @@
                 </div>
             </div>
 
+            <!-- Sección Inventario / Productos -->
             <div id="admin-inventory-section" class="hidden space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="font-bold text-lg text-gray-800">Control de Stock y Precios</h3>
@@ -109,6 +154,45 @@
                             </tr>
                         </thead>
                         <tbody id="admin-inventory-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Gestión de Categorías (CRUD) -->
+            <div id="admin-categories-section" class="hidden space-y-4">
+                <div class="border-b border-gray-100 pb-2">
+                    <h3 class="font-bold text-lg text-gray-800">Control de Categorías</h3>
+                    <p class="text-xs text-gray-500">Agrega, edita el nombre o elimina categorías del catálogo.</p>
+                </div>
+
+                <!-- Formulario agregar categoría -->
+                <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 flex flex-col sm:flex-row gap-2.5">
+                    <input
+                        type="text"
+                        id="new-category-input"
+                        placeholder="Nombre de la nueva categoría (Ej. Desayunos, Ensaladas)..."
+                        class="flex-grow bg-white border border-emerald-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    >
+                    <button
+                        onclick="createCategoryFromAdmin()"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer shrink-0"
+                    >
+                        <i data-lucide="plus" class="w-4 h-4"></i> Agregar Categoría
+                    </button>
+                </div>
+
+                <!-- Tabla de categorías -->
+                <div class="overflow-x-auto bg-white rounded-2xl shadow-xs border border-gray-100">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 border-b border-gray-100 text-xs uppercase">
+                                <th class="p-4 font-semibold w-16">ID</th>
+                                <th class="p-4 font-semibold">Categoría</th>
+                                <th class="p-4 font-semibold">Productos Asociados</th>
+                                <th class="p-4 font-semibold text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-categories-table"></tbody>
                     </table>
                 </div>
             </div>
@@ -199,7 +283,7 @@
 
     <!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
     <script>
-        const SUPABASE_URL = 'https://hohtterveiinsjaqgrrl.supabase.co/rest/v1/';
+        const SUPABASE_URL = 'https://hohtterveiinsjaqgrrl.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvaHR0ZXJ2ZWlpbnNqYXFncnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzODMwNTUsImV4cCI6MjEwNzk1OTA1NX0.hln-Mdy5NKLC_GRNldww302Dgsk4dCg7G8LNu5BEJgY';
         
         const ADMIN_CREDENTIALS = {
@@ -209,7 +293,6 @@
 
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-        // Datos iniciales de respaldo en caso de que las tablas aún no estén migradas
         const FALLBACK_CATEGORIES = [
             { id: 1, name: 'Bebidas & Cafés' },
             { id: 2, name: 'Hamburguesas & Combos' },
@@ -266,6 +349,7 @@
         let orders = JSON.parse(localStorage.getItem('cat_orders')) || [];
         let cart = JSON.parse(localStorage.getItem('cat_cart')) || [];
         let currentFilter = 'all';
+        let searchQuery = '';
         let isAdminLoggedIn = sessionStorage.getItem('admin_session') === 'true';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -299,11 +383,12 @@
             } catch (error) {
                 console.warn("Usando datos locales o de respaldo:", error.message);
             } finally {
-                renderCategories();
+                renderCategoryDropdown();
                 renderProducts();
                 renderAdminInventory();
                 populateCategoryDropdown();
                 renderAdminOrders();
+                renderAdminCategories();
             }
         }
 
@@ -313,6 +398,9 @@
                 supabaseClient
                     .channel('public-db-changes')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+                        fetchInitialData();
+                    })
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
                         fetchInitialData();
                     })
                     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
@@ -326,19 +414,15 @@
             }
         }
 
-        // Síntesis de audio con Web Audio API (timbre de pedido en 2 notas)
         function triggerAudioNotification() {
             try {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContextClass) return;
-                const ctx = new AudioContextClass();
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
-                
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(783.99, now); // Nota Sol (G5)
-                osc.frequency.setValueAtTime(1046.50, now + 0.15); // Nota Do (C6)
+                osc.frequency.setValueAtTime(783.99, now);
+                osc.frequency.setValueAtTime(1046.50, now + 0.15);
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
                 osc.connect(gain);
@@ -362,14 +446,90 @@
             setTimeout(() => div.remove(), 5000);
         }
 
+        // Renderizado del Selector de Categorías (Dropdown)
+        function renderCategoryDropdown() {
+            const select = document.getElementById('category-select');
+            if (!select) return;
+
+            let html = `<option value="all">Todas las categorías (${products.length})</option>`;
+            categories.forEach(cat => {
+                const count = products.filter(p => String(p.category_id) === String(cat.id)).length;
+                const selected = String(currentFilter) === String(cat.id) ? 'selected' : '';
+                html += `<option value="${cat.id}" ${selected}>${cat.name} (${count})</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function filterByCategory(id) {
+            currentFilter = id;
+            renderProducts();
+            updateFilterSummary();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim().toLowerCase();
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (clearBtn) {
+                if (searchQuery) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+            renderProducts();
+            updateFilterSummary();
+        }
+
+        function clearSearch() {
+            searchQuery = '';
+            const input = document.getElementById('search-input');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderProducts();
+            updateFilterSummary();
+        }
+
+        function resetAllFilters() {
+            currentFilter = 'all';
+            clearSearch();
+            renderCategoryDropdown();
+        }
+
+        function updateFilterSummary() {
+            const summary = document.getElementById('filter-summary');
+            const countText = document.getElementById('filter-count-text');
+            if (!summary || !countText) return;
+
+            const isFiltered = currentFilter !== 'all' || searchQuery !== '';
+            if (isFiltered) {
+                summary.classList.remove('hidden');
+            } else {
+                summary.classList.add('hidden');
+            }
+        }
+
         function renderProducts() {
             const grid = document.getElementById('products-grid');
-            const filtered = currentFilter === 'all' 
-                ? products 
-                : products.filter(p => String(p.category_id) === String(currentFilter));
+            const filtered = products.filter(p => {
+                const matchesCat = currentFilter === 'all' || String(p.category_id) === String(currentFilter);
+                const matchesSearch = !searchQuery || 
+                    p.name.toLowerCase().includes(searchQuery) || 
+                    (p.description && p.description.toLowerCase().includes(searchQuery));
+                return matchesCat && matchesSearch;
+            });
+
+            const countText = document.getElementById('filter-count-text');
+            if (countText) {
+                countText.textContent = `Mostrando ${filtered.length} de ${products.length} productos`;
+            }
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">No hay productos disponibles en esta categoría.</div>`;
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-3xl border border-gray-100 shadow-xs space-y-2">
+                        <div class="text-3xl">🔍</div>
+                        <p class="font-bold text-gray-700">No hay productos que coincidan con la búsqueda</p>
+                        <p class="text-xs text-gray-400">Intenta con otra palabra clave o selecciona otra categoría.</p>
+                        <button onclick="resetAllFilters()" class="text-xs font-bold text-emerald-600 hover:underline pt-2 cursor-pointer">Restablecer filtros</button>
+                    </div>
+                `;
                 return;
             }
 
@@ -405,23 +565,6 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        function renderCategories() {
-            const container = document.getElementById('category-filters');
-            let html = `<button onclick="filterByCategory('all')" class="category-btn ${currentFilter === 'all' ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} px-4 py-2 rounded-xl text-sm font-medium shrink-0 transition cursor-pointer">Todos</button>`;
-            
-            categories.forEach(cat => {
-                const active = String(currentFilter) === String(cat.id);
-                html += `<button onclick="filterByCategory('${cat.id}')" class="category-btn ${active ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} px-4 py-2 rounded-xl text-sm font-medium shrink-0 transition cursor-pointer">${cat.name}</button>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function filterByCategory(id) {
-            currentFilter = id;
-            renderCategories();
-            renderProducts();
-        }
-
         function addToCartById(productId) {
             const product = products.find(p => String(p.id) === String(productId));
             if (!product) return;
@@ -449,10 +592,6 @@
             updateCartCounter();
             renderProducts();
         }
-
-        // ==========================================
-        // CÓDIGO COMPLETADO Y CORREGIDO
-        // ==========================================
 
         function updateCartCounter() {
             const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -569,7 +708,6 @@
             try {
                 if (supabaseClient) {
                     await supabaseClient.from('orders').insert([orderPayload]);
-                    // Reducir stock en Supabase
                     for (const item of cart) {
                         const newStock = Math.max(0, item.stock - item.quantity);
                         await supabaseClient.from('products').update({ stock: newStock }).eq('id', item.id);
@@ -579,19 +717,16 @@
                 console.warn("Fallback guardando orden localmente:", e);
             }
 
-            // Guardar local
             const localOrder = { ...orderPayload, id: Date.now(), created_at: new Date().toISOString() };
             orders.unshift(localOrder);
             localStorage.setItem('cat_orders', JSON.stringify(orders));
 
-            // Ajustar stock local
             products = products.map(p => {
                 const inC = cart.find(c => String(c.id) === String(p.id));
                 return inC ? { ...p, stock: Math.max(0, p.stock - inC.quantity) } : p;
             });
             localStorage.setItem('cat_products', JSON.stringify(products));
 
-            // Notificación y Confetti
             triggerAudioNotification();
             showInstantNotification(localOrder);
             if (window.confetti) {
@@ -600,7 +735,6 @@
 
             alert('¡Tu pedido ha sido recibido con éxito! En breve nos pondremos en contacto contigo.');
 
-            // Limpiar formulario y carrito
             cart = [];
             localStorage.setItem('cat_cart', JSON.stringify(cart));
             document.getElementById('customer-name').value = '';
@@ -639,7 +773,7 @@
         }
 
         // ==========================================
-        // ADMINISTRACIÓN (LOGIN, PEDIDOS, INVENTARIO)
+        // ADMINISTRACIÓN (LOGIN, PEDIDOS, PRODUCTOS, CATEGORÍAS)
         // ==========================================
 
         function openAdminModal() {
@@ -665,6 +799,7 @@
                 switchView('admin');
                 renderAdminOrders();
                 renderAdminInventory();
+                renderAdminCategories();
             } else {
                 alert('Credenciales incorrectas. (Usuario: Admin3434 / Clave: Panama2006!!)');
             }
@@ -685,9 +820,11 @@
                 adminView.classList.remove('hidden');
                 renderAdminOrders();
                 renderAdminInventory();
+                renderAdminCategories();
             } else {
                 adminView.classList.add('hidden');
                 catalogView.classList.remove('hidden');
+                renderCategoryDropdown();
                 renderProducts();
             }
         }
@@ -695,21 +832,32 @@
         function switchAdminTab(tab) {
             const ordersSec = document.getElementById('admin-orders-section');
             const invSec = document.getElementById('admin-inventory-section');
+            const catSec = document.getElementById('admin-categories-section');
+
             const tabOrdersBtn = document.getElementById('tab-orders-btn');
             const tabInvBtn = document.getElementById('tab-inventory-btn');
+            const tabCatBtn = document.getElementById('tab-categories-btn');
+
+            ordersSec.classList.add('hidden');
+            invSec.classList.add('hidden');
+            catSec.classList.add('hidden');
+
+            tabOrdersBtn.className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer shrink-0";
+            tabInvBtn.className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer shrink-0";
+            tabCatBtn.className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer shrink-0";
 
             if (tab === 'orders') {
                 ordersSec.classList.remove('hidden');
-                invSec.classList.add('hidden');
-                tabOrdersBtn.className = "py-2 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer";
-                tabInvBtn.className = "py-2 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer";
+                tabOrdersBtn.className = "py-2.5 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer shrink-0";
                 renderAdminOrders();
-            } else {
-                ordersSec.classList.add('hidden');
+            } else if (tab === 'inventory') {
                 invSec.classList.remove('hidden');
-                tabOrdersBtn.className = "py-2 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700 cursor-pointer";
-                tabInvBtn.className = "py-2 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer";
+                tabInvBtn.className = "py-2.5 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer shrink-0";
                 renderAdminInventory();
+            } else if (tab === 'categories') {
+                catSec.classList.remove('hidden');
+                tabCatBtn.className = "py-2.5 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm cursor-pointer shrink-0";
+                renderAdminCategories();
             }
         }
 
@@ -820,6 +968,145 @@
             select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
         }
 
+        // ==========================================
+        // GESTIÓN DE CATEGORÍAS (ADMIN)
+        // ==========================================
+
+        function renderAdminCategories() {
+            const tbody = document.getElementById('admin-categories-table');
+            if (!tbody) return;
+
+            tbody.innerHTML = categories.map(cat => {
+                const count = products.filter(p => String(p.category_id) === String(cat.id)).length;
+                return `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50/50">
+                        <td class="p-4 font-mono text-xs text-gray-400">#${cat.id}</td>
+                        <td class="p-4 font-bold text-gray-900" id="cat-name-cell-${cat.id}">
+                            ${cat.name}
+                        </td>
+                        <td class="p-4">
+                            <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg text-xs font-semibold">
+                                ${count} producto(s)
+                            </span>
+                        </td>
+                        <td class="p-4 text-right space-x-2">
+                            <button onclick="editCategoryPrompt('${cat.id}')" class="text-gray-500 hover:text-emerald-600 p-1 cursor-pointer" title="Editar nombre">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteCategory('${cat.id}')" class="text-gray-400 hover:text-rose-600 p-1 cursor-pointer" title="Eliminar categoría">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        async function createCategoryFromAdmin() {
+            const input = document.getElementById('new-category-input');
+            const name = input ? input.value.trim() : '';
+
+            if (!name) {
+                alert('Escribe un nombre para la categoría.');
+                return;
+            }
+
+            const newCat = { id: Date.now(), name: name };
+
+            if (supabaseClient) {
+                try {
+                    const { data } = await supabaseClient.from('categories').insert([{ name }]).select().single();
+                    if (data) newCat.id = data.id;
+                } catch (e) {
+                    console.warn(e);
+                }
+            }
+
+            categories.push(newCat);
+            localStorage.setItem('cat_categories', JSON.stringify(categories));
+            if (input) input.value = '';
+
+            renderAdminCategories();
+            renderCategoryDropdown();
+            populateCategoryDropdown();
+            renderProducts();
+        }
+
+        async function editCategoryPrompt(id) {
+            const cat = categories.find(c => String(c.id) === String(id));
+            if (!cat) return;
+
+            const newName = prompt(`Editar nombre de la categoría:`, cat.name);
+            if (!newName || !newName.trim() || newName.trim() === cat.name) return;
+
+            cat.name = newName.trim();
+            localStorage.setItem('cat_categories', JSON.stringify(categories));
+
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('categories').update({ name: cat.name }).eq('id', id);
+                } catch(e) {}
+            }
+
+            // Actualizar referencias en productos
+            products = products.map(p => {
+                if (String(p.category_id) === String(id)) {
+                    return { ...p, categories: { id: cat.id, name: cat.name } };
+                }
+                return p;
+            });
+            localStorage.setItem('cat_products', JSON.stringify(products));
+
+            renderAdminCategories();
+            renderCategoryDropdown();
+            populateCategoryDropdown();
+            renderProducts();
+            renderAdminInventory();
+        }
+
+        async function deleteCategory(id) {
+            const cat = categories.find(c => String(c.id) === String(id));
+            if (!cat) return;
+
+            const productsInCat = products.filter(p => String(p.category_id) === String(id)).length;
+            let msg = `¿Seguro que deseas eliminar la categoría "${cat.name}"?`;
+            if (productsInCat > 0) {
+                msg = `¡Atención! Hay ${productsInCat} producto(s) asignados a "${cat.name}". Si la eliminas, esos productos quedarán como categoría "General". ¿Deseas continuar?`;
+            }
+
+            if (!confirm(msg)) return;
+
+            categories = categories.filter(c => String(c.id) !== String(id));
+            localStorage.setItem('cat_categories', JSON.stringify(categories));
+
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('categories').delete().eq('id', id);
+                } catch(e) {}
+            }
+
+            // Desasociar productos
+            products = products.map(p => {
+                if (String(p.category_id) === String(id)) {
+                    return { ...p, category_id: '', categories: undefined };
+                }
+                return p;
+            });
+            localStorage.setItem('cat_products', JSON.stringify(products));
+
+            if (String(currentFilter) === String(id)) {
+                currentFilter = 'all';
+            }
+
+            renderAdminCategories();
+            renderCategoryDropdown();
+            populateCategoryDropdown();
+            renderProducts();
+            renderAdminInventory();
+        }
+
         function openProductModal(prod = null) {
             document.getElementById('product-modal').classList.remove('hidden');
             populateCategoryDropdown();
@@ -869,7 +1156,6 @@
             const catObj = categories.find(c => String(c.id) === String(catId));
 
             if (id) {
-                // Editar existente
                 const p = products.find(prod => String(prod.id) === String(id));
                 if (p) {
                     p.name = name;
@@ -888,7 +1174,6 @@
                     } catch(e) {}
                 }
             } else {
-                // Nuevo producto
                 const newP = {
                     id: Date.now(),
                     name,
@@ -912,6 +1197,7 @@
 
             localStorage.setItem('cat_products', JSON.stringify(products));
             closeProductModal();
+            renderCategoryDropdown();
             renderProducts();
             renderAdminInventory();
         }
@@ -928,6 +1214,7 @@
                 } catch(e) {}
             }
 
+            renderCategoryDropdown();
             renderProducts();
             renderAdminInventory();
         }
