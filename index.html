@@ -31,9 +31,6 @@
                     <span class="hidden sm:inline">Carrito</span>
                     <span id="cart-counter" class="bg-emerald-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
                 </button>
-                <button onclick="openAdminModal()" class="text-gray-500 hover:text-emerald-600 p-2 rounded-xl transition cursor-pointer" title="Módulo Administrativo">
-                    <i data-lucide="shield-check" class="w-5 h-5"></i>
-                </button>
             </div>
         </div>
     </header>
@@ -50,7 +47,7 @@
                 </div>
             </div>
 
-            <!-- BARRA DE BÚSQUEDA Y SELECTOR DE CATEGORÍAS (SIN BOTONES HORIZONTALES) -->
+            <!-- BARRA DE BÚSQUEDA Y SELECTOR DE CATEGORÍAS (SIN PLACEHOLDERS) -->
             <div class="bg-white p-4 rounded-3xl border border-gray-200/80 shadow-xs space-y-3">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <!-- Campo de búsqueda -->
@@ -60,7 +57,7 @@
                             type="text"
                             id="search-input"
                             oninput="handleSearch(this.value)"
-                            placeholder="Buscar productos por nombre o descripción..."
+                            placeholder=""
                             class="w-full bg-gray-50 hover:bg-white border border-gray-200 pl-10 pr-9 py-2.5 rounded-2xl text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
                         >
                         <button
@@ -170,7 +167,7 @@
                     <input
                         type="text"
                         id="new-category-input"
-                        placeholder="Nombre de la nueva categoría (Ej. Desayunos, Ensaladas)..."
+                        placeholder=""
                         class="flex-grow bg-white border border-emerald-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                     >
                     <button
@@ -215,9 +212,18 @@
                     <span id="cart-total" class="text-emerald-600">$0.00</span>
                 </div>
                 <div class="space-y-3">
-                    <input type="text" id="customer-name" placeholder="Nombre y Apellido *" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
-                    <input type="text" id="customer-phone" placeholder="Teléfono / WhatsApp (Ej. +507 6123-4567) *" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
-                    <textarea id="customer-address" placeholder="Dirección de entrega exacta (Calle, Edif, Casa) *" rows="2" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"></textarea>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre y Apellido *</label>
+                        <input type="text" id="customer-name" placeholder="" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Teléfono / WhatsApp *</label>
+                        <input type="text" id="customer-phone" placeholder="" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Dirección de entrega exacta (Calle, Edif, Casa) *</label>
+                        <textarea id="customer-address" placeholder="" rows="2" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"></textarea>
+                    </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2">
                     <button onclick="checkoutOrder()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-sm cursor-pointer">Confirmar Pedido</button>
@@ -239,11 +245,11 @@
             <div class="space-y-3">
                 <div>
                     <label class="text-xs font-semibold text-gray-500 uppercase">Usuario</label>
-                    <input type="text" id="admin-user" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm" placeholder="Admin3434">
+                    <input type="text" id="admin-user" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm" placeholder="">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-500 uppercase">Contraseña</label>
-                    <input type="password" id="admin-pass" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm" placeholder="••••••••">
+                    <input type="password" id="admin-pass" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm" placeholder="">
                 </div>
             </div>
             <button onclick="handleAdminLogin()" class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-2.5 rounded-xl transition text-sm cursor-pointer">Ingresar al Panel</button>
@@ -259,11 +265,23 @@
             </div>
             <input type="hidden" id="prod-id">
             <div class="space-y-3">
-                <input type="text" id="prod-name" placeholder="Nombre del producto *" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
-                <textarea id="prod-desc" placeholder="Descripción corta" rows="2" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm resize-none"></textarea>
+                <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block">Nombre del producto *</label>
+                    <input type="text" id="prod-name" placeholder="" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block">Descripción corta</label>
+                    <textarea id="prod-desc" placeholder="" rows="2" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm resize-none"></textarea>
+                </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <input type="number" step="0.01" id="prod-price" placeholder="Precio ($) *" class="bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
-                    <input type="number" id="prod-stock" placeholder="Stock disponible *" class="bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block">Precio ($) *</label>
+                        <input type="number" step="0.01" id="prod-price" placeholder="" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block">Stock disponible *</label>
+                        <input type="number" id="prod-stock" placeholder="" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                    </div>
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block">Categoría</label>
@@ -285,16 +303,13 @@
                     <p class="text-[11px] text-sky-800">
                         ID: <code class="bg-white/80 px-1 py-0.5 rounded font-mono font-bold">12OUZ7YfCOeYIHlk-ZACeYViUrTtNuPmI</code>
                         <br>
-                        Pega el enlace o ID del archivo de Google Drive.
+                        Si no registras foto, se usará automáticamente la foto por defecto.
                     </p>
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="text-xs font-bold text-gray-500 uppercase">URL o ID de Google Drive</label>
-                        <span class="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">auto=format&fit=crop&w=800&q=80</span>
-                    </div>
-                    <input type="text" id="prod-image" placeholder="https://drive.google.com/file/d/... o URL web" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                    <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">URL o ID de Google Drive</label>
+                    <input type="text" id="prod-image" placeholder="" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
                 </div>
             </div>
             <button onclick="saveProduct()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl transition text-sm cursor-pointer">Guardar Producto</button>
@@ -304,6 +319,9 @@
     <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-400">
         &copy; 2026 Catálogo Express · Diseñado para comercio rápido en tiempo real.
     </footer>
+
+    <!-- BOTÓN INVISIBLE PARA ADMINISTRACIÓN EN LA ESQUINA INFERIOR DERECHA -->
+    <button onclick="openAdminModal()" class="fixed bottom-0 right-0 w-16 h-16 z-50 opacity-0 cursor-pointer" aria-label="Acceso Administrativo" title=""></button>
 
     <!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
     <script>
@@ -335,7 +353,7 @@
 
         function formatProductImageUrl(rawUrl) {
             if (!rawUrl || !rawUrl.trim()) {
-                return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80';
+                return 'https://lh3.googleusercontent.com/d/1uSNdpX91CiKAZaywFKzKDuNZDBgk7ceP=w800';
             }
             const trimmed = rawUrl.trim();
             const driveId = extractGoogleDriveFileId(trimmed);
@@ -607,7 +625,7 @@
                 <div class="bg-white border border-gray-100 rounded-3xl p-4 flex flex-col justify-between shadow-2xs hover:shadow-lg transition">
                     <div>
                         <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3 relative">
-                            <img src="${formatProductImageUrl(p.image_url)}" alt="${p.name}" class="w-full h-full object-cover">
+                            <img src="${formatProductImageUrl(p.image_url)}" alt="${p.name}" onerror="this.src='https://lh3.googleusercontent.com/d/1uSNdpX91CiKAZaywFKzKDuNZDBgk7ceP=w800'" class="w-full h-full object-cover">
                             <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-xs text-xs font-semibold px-2.5 py-1 rounded-lg text-gray-700">${p.categories?.name || 'General'}</span>
                             ${isOutOfStock ? `<span class="absolute top-2 right-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">Agotado</span>` : `<span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg">Stock: ${p.stock}</span>`}
                         </div>
@@ -691,7 +709,7 @@
                 return `
                     <div class="pt-3 pb-3 flex items-center justify-between gap-3">
                         <div class="flex items-center space-x-3 min-w-0">
-                            <img src="${formatProductImageUrl(item.image_url)}" class="w-12 h-12 rounded-xl object-cover shrink-0">
+                            <img src="${formatProductImageUrl(item.image_url)}" onerror="this.src='https://lh3.googleusercontent.com/d/1uSNdpX91CiKAZaywFKzKDuNZDBgk7ceP=w800'" class="w-12 h-12 rounded-xl object-cover shrink-0">
                             <div class="min-w-0">
                                 <h4 class="font-bold text-sm text-gray-900 truncate">${item.name}</h4>
                                 <span class="text-xs text-emerald-600 font-bold">$${Number(item.price).toFixed(2)} c/u</span>
@@ -1003,7 +1021,7 @@
             tbody.innerHTML = products.map(p => `
                 <tr class="border-b border-gray-100 hover:bg-gray-50/50">
                     <td class="p-4 flex items-center space-x-3">
-                        <img src="${formatProductImageUrl(p.image_url)}" class="w-10 h-10 rounded-xl object-cover">
+                        <img src="${formatProductImageUrl(p.image_url)}" onerror="this.src='https://lh3.googleusercontent.com/d/1uSNdpX91CiKAZaywFKzKDuNZDBgk7ceP=w800'" class="w-10 h-10 rounded-xl object-cover">
                         <div>
                             <span class="font-bold text-gray-900 block">${p.name}</span>
                             <span class="text-xs text-gray-400 line-clamp-1">${p.description || ''}</span>
