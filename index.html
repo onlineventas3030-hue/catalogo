@@ -186,14 +186,13 @@
     <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-400">
         &copy; 2026 Catálogo Express · Diseñado para comercio rápido en tiempo real.
     </footer>
-
-    <!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
+<!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
     <script>
-        // CONFIGURACIÓN SUPABASE (Modificable según tu entorno)
+        // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = 'TU_SUPABASE_URL';
         const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';
         
-        // Credenciales Únicas de Administrador (Modificables directamente desde el código)
+        // Credenciales Únicas de Administrador
         const ADMIN_CREDENTIALS = {
             user: "Admin3434",
             pass: "Panama2006!!"
@@ -214,19 +213,19 @@
             setupRealtimeSubscriptions();
         });
 
-        // Obtener datos iniciales
+        // Obtener datos iniciales de Supabase de forma segura
         async function fetchInitialData() {
             try {
                 const [catRes, prodRes] = await Promise.all([
                     supabaseClient.from('categories').select('*'),
-                    supabaseClient.from('products').select('*, categories(name)')
+                    supabaseClient.from('products').select('*, categories(id, name)')
                 ]);
 
                 if (catRes.error) throw catRes.error;
                 if (prodRes.error) throw prodRes.error;
 
-                categories = catRes.data;
-                products = prodRes.data;
+                categories = catRes.data || [];
+                products = prodRes.data || [];
 
                 renderCategories();
                 renderProducts();
@@ -234,15 +233,16 @@
                 populateCategoryDropdown();
             } catch (error) {
                 console.error("Error cargando datos:", error.message);
+                document.getElementById('products-grid').innerHTML = `<div class="col-span-full text-center py-12 text-red-400">Error al conectar con la base de datos. Verifica tus credenciales.</div>`;
             }
         }
 
-        // Suscripciones en Tiempo Real (Supabase Realtime)
+        // Suscripciones en Tiempo Real
         function setupRealtimeSubscriptions() {
             supabaseClient
                 .channel('public-db-changes')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    fetchInitialData(); // Actualiza inventario y catálogo dinámicamente
+                    fetchInitialData();
                 })
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
                     triggerAudioNotification();
@@ -252,27 +252,26 @@
                 .subscribe();
         }
 
-        // Notificación de ventas instantáneas (Visual y Sonora)
         function triggerAudioNotification() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // Nota D5
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
                 gain.gain.setValueAtTime(0.1, ctx.currentTime);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start();
                 osc.stop(ctx.currentTime + 0.2);
-            } catch(e) { console.log("Audio no soportado sin interacción previa"); }
+            } catch(e) {}
         }
 
         function showInstantNotification(order) {
             const div = document.createElement('div');
             div.className = "fixed bottom-5 right-5 bg-gray-900 text-white px-5 py-4 rounded-2xl shadow-2xl z-50 flex items-center space-x-3 border border-emerald-500/30 animate-bounce";
             div.innerHTML = `
-                <div class="bg-emerald-500 text-white p-2 rounded-xl"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+                <div class="bg-emerald-500 text-white p-2 rounded-xl">🛍️</div>
                 <div>
                     <p class="font-bold text-sm">¡Nuevo Pedido Recibido!</p>
                     <p class="text-xs text-gray-300">${order.customer_name} - Total: $${order.total_amount}</p>
@@ -409,7 +408,6 @@
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
             try {
-                // 1. Crear el Pedido
                 const { data: orderData, error: orderError } = await supabaseClient
                     .from('orders')
                     .insert([{ customer_name: name, customer_phone: phone, delivery_address: address, total_amount: total }])
@@ -418,7 +416,6 @@
 
                 if (orderError) throw orderError;
 
-                // 2. Crear los ítems del pedido y restar stock
                 for (const item of cart) {
                     await supabaseClient.from('order_items').insert([{
                         order_id: orderData.id,
@@ -427,13 +424,12 @@
                         price: item.price
                     }]);
 
-                    // Actualizar Stock en base de datos
                     await supabaseClient.from('products')
                         .update({ stock: item.stock - item.quantity })
                         .eq('id', item.id);
                 }
 
-                alert('¡Pedido realizado con éxito! El negocio ha sido notificado.');
+                alert('¡Pedido realizado con éxito!');
                 cart = [];
                 updateCartCounter();
                 closeCartModal();
@@ -443,7 +439,7 @@
             }
         }
 
-        // Módulo de Administración y Autenticación
+        // Módulo de Administración
         function openAdminModal() { document.getElementById('admin-login-modal').classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('admin-login-modal').classList.add('hidden'); }
 
@@ -456,7 +452,7 @@
                 switchView('admin');
                 fetchAdminOrders();
             } else {
-                alert('Credenciales de acceso incorrectas.');
+                alert('Credenciales incorrectas.');
             }
         }
 
@@ -489,7 +485,7 @@
             if (error) return;
 
             const list = document.getElementById('admin-orders-list');
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 list.innerHTML = `<div class="text-gray-400 py-6 text-center">No hay pedidos recientes.</div>`;
                 return;
             }
@@ -519,10 +515,14 @@
 
         function renderAdminInventory() {
             const tbody = document.getElementById('admin-inventory-table');
+            if(!products.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">Sin productos registrados.</td></tr>`;
+                return;
+            }
             tbody.innerHTML = products.map(p => `
                 <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                     <td class="p-4 flex items-center space-x-3">
-                        <img src="${p.image_url}" class="w-10 h-10 object-cover rounded-lg bg-gray-100">
+                        <img src="${p.image_url || ''}" class="w-10 h-10 object-cover rounded-lg bg-gray-100" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=100&q=80'">
                         <span class="font-medium text-gray-900">${p.name}</span>
                     </td>
                     <td class="p-4 text-gray-500">${p.categories?.name || 'General'}</td>
@@ -538,10 +538,15 @@
 
         function populateCategoryDropdown() {
             const select = document.getElementById('prod-category');
+            if(!categories.length) {
+                select.innerHTML = `<option value="">No hay categorías</option>`;
+                return;
+            }
             select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
         }
 
         function openProductModal(product = null) {
+            populateCategoryDropdown();
             if (product) {
                 document.getElementById('product-modal-title').innerText = "Editar Producto";
                 document.getElementById('prod-id').value = product.id;
@@ -549,7 +554,7 @@
                 document.getElementById('prod-desc').value = product.description || '';
                 document.getElementById('prod-price').value = product.price;
                 document.getElementById('prod-stock').value = product.stock;
-                document.getElementById('prod-category').value = product.category_id;
+                document.getElementById('prod-category').value = product.category_id || '';
                 document.getElementById('prod-image').value = product.image_url || '';
             } else {
                 document.getElementById('product-modal-title').innerText = "Crear Producto";
@@ -567,34 +572,46 @@
 
         async function saveProduct() {
             const id = document.getElementById('prod-id').value;
-            const name = document.getElementById('prod-name').value;
-            const description = document.getElementById('prod-desc').value;
+            const name = document.getElementById('prod-name').value.trim();
+            const description = document.getElementById('prod-desc').value.trim();
             const price = parseFloat(document.getElementById('prod-price').value);
             const stock = parseInt(document.getElementById('prod-stock').value);
-            const category_id = parseInt(document.getElementById('prod-category').value);
-            const image_url = document.getElementById('prod-image').value;
+            const category_id = document.getElementById('prod-category').value ? parseInt(document.getElementById('prod-category').value) : null;
+            const image_url = document.getElementById('prod-image').value.trim();
 
             if (!name || isNaN(price) || isNaN(stock)) {
-                alert('Por favor completa los campos obligatorios correctamente.');
+                alert('Por favor completa los campos obligatorios (Nombre, Precio y Stock).');
                 return;
             }
 
             const payload = { name, description, price, stock, category_id, image_url };
 
-            if (id) {
-                await supabaseClient.from('products').update(payload).eq('id', id);
-            } else {
-                await supabaseClient.from('products').insert([payload]);
-            }
+            try {
+                let res;
+                if (id) {
+                    res = await supabaseClient.from('products').update(payload).eq('id', id);
+                } else {
+                    res = await supabaseClient.from('products').insert([payload]);
+                }
 
-            closeProductModal();
-            fetchInitialData();
+                if (res.error) throw res.error;
+
+                closeProductModal();
+                fetchInitialData();
+                alert('¡Producto guardado exitosamente!');
+            } catch (error) {
+                alert('Error al guardar el producto: ' + error.message);
+            }
         }
 
         async function deleteProduct(id) {
             if (confirm('¿Estás seguro de eliminar este producto?')) {
-                await supabaseClient.from('products').delete().eq('id', id);
-                fetchInitialData();
+                const { error } = await supabaseClient.from('products').delete().eq('id', id);
+                if(error) {
+                    alert('Error al eliminar: ' + error.message);
+                } else {
+                    fetchInitialData();
+                }
             }
         }
     </script>
