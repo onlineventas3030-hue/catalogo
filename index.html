@@ -54,12 +54,11 @@
 
             <!-- Grid de Productos -->
             <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Inyectado dinámicamente -->
                 <div class="col-span-full text-center py-12 text-gray-400">Cargando inventario en tiempo real...</div>
             </div>
         </div>
 
-        <!-- VISTA DE ADMINISTRACIÓN (Oculta por defecto) -->
+        <!-- VISTA DE ADMINISTRACIÓN -->
         <div id="view-admin" class="hidden space-y-6">
             <div class="flex items-center justify-between border-b pb-4">
                 <div>
@@ -69,13 +68,11 @@
                 <button onclick="switchView('catalog')" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition">Salir al Catálogo</button>
             </div>
 
-            <!-- Pestañas de Admin -->
             <div class="flex space-x-2 border-b border-gray-200">
                 <button onclick="switchAdminTab('orders')" id="tab-orders-btn" class="py-2 px-4 border-b-2 border-emerald-600 font-semibold text-emerald-600 text-sm">Pedidos Entrantes</button>
                 <button onclick="switchAdminTab('inventory')" id="tab-inventory-btn" class="py-2 px-4 border-b-2 border-transparent text-gray-500 text-sm hover:text-gray-700">Gestionar Inventario</button>
             </div>
 
-            <!-- Sección Pedidos Admin -->
             <div id="admin-orders-section" class="space-y-4">
                 <h3 class="font-bold text-lg text-gray-800">Monitoreo de Pedidos en Vivo</h3>
                 <div id="admin-orders-list" class="space-y-3">
@@ -83,7 +80,6 @@
                 </div>
             </div>
 
-            <!-- Sección Inventario Admin -->
             <div id="admin-inventory-section" class="hidden space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="font-bold text-lg text-gray-800">Control de Stock y Precios</h3>
@@ -102,17 +98,14 @@
                                 <th class="p-4 font-semibold text-right">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-inventory-table">
-                            <!-- Inyectado dinámicamente -->
-                        </tbody>
+                        <tbody id="admin-inventory-table"></tbody>
                     </table>
                 </div>
             </div>
         </div>
-
     </main>
 
-    <!-- MODAL DE CARRITO Y CHECKOUT -->
+    <!-- MODAL CARRITO -->
     <div id="cart-modal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="p-5 border-b border-gray-100 flex items-center justify-between">
@@ -128,9 +121,9 @@
                     <span id="cart-total" class="text-emerald-600">$0.00</span>
                 </div>
                 <div class="space-y-3">
-                    <input type="text" id="customer-name" placeholder="Nombre y Apellido" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <input type="text" id="customer-phone" placeholder="Teléfono (Ej. 0414-1234567)" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <textarea id="customer-address" placeholder="Dirección de entrega exacta" rows="2" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
+                    <input type="text" id="customer-name" placeholder="Nombre y Apellido" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                    <input type="text" id="customer-phone" placeholder="Teléfono (Ej. 0414-1234567)" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                    <textarea id="customer-address" placeholder="Dirección de entrega exacta" rows="2" class="w-full bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-sm resize-none"></textarea>
                 </div>
                 <button onclick="checkoutOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-sm">Confirmar Pedido</button>
             </div>
@@ -147,18 +140,18 @@
             <div class="space-y-3">
                 <div>
                     <label class="text-xs font-semibold text-gray-500 uppercase">Usuario</label>
-                    <input type="text" id="admin-user" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" id="admin-user" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-500 uppercase">Contraseña</label>
-                    <input type="password" id="admin-pass" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="password" id="admin-pass" class="w-full mt-1 bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl text-sm">
                 </div>
             </div>
             <button onclick="handleAdminLogin()" class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-2.5 rounded-xl transition text-sm">Ingresar al Panel</button>
         </div>
     </div>
 
-    <!-- MODAL NUEVO/EDITAR PRODUCTO (ADMIN) -->
+    <!-- MODAL PRODUCTO (ADMIN) -->
     <div id="product-modal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between">
@@ -173,26 +166,27 @@
                     <input type="number" step="0.01" id="prod-price" placeholder="Precio ($)" class="bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
                     <input type="number" id="prod-stock" placeholder="Stock disponible" class="bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
                 </div>
-                <select id="prod-category" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
-                    <!-- Categorías dinámicas -->
-                </select>
+                <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block">Categoría</label>
+                    <select id="prod-category" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
+                        <option value="">Cargando categorías...</option>
+                    </select>
+                </div>
                 <input type="text" id="prod-image" placeholder="URL de la Imagen" class="w-full bg-gray-50 border border-gray-200 px-4 py-2.5 rounded-xl text-sm">
             </div>
             <button onclick="saveProduct()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">Guardar Producto</button>
         </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
     <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-400">
         &copy; 2026 Catálogo Express · Diseñado para comercio rápido en tiempo real.
     </footer>
-<!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
+
+    <!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
     <script>
-        // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = 'TU_SUPABASE_URL';
         const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';
         
-        // Credenciales Únicas de Administrador
         const ADMIN_CREDENTIALS = {
             user: "Admin3434",
             pass: "Panama2006!!"
@@ -200,20 +194,17 @@
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Estado Global de la App
         let products = [];
         let categories = [];
         let cart = [];
         let currentFilter = 'all';
 
-        // Inicializar Aplicación
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             fetchInitialData();
             setupRealtimeSubscriptions();
         });
 
-        // Obtener datos iniciales de Supabase de forma segura
         async function fetchInitialData() {
             try {
                 const [catRes, prodRes] = await Promise.all([
@@ -237,7 +228,6 @@
             }
         }
 
-        // Suscripciones en Tiempo Real
         function setupRealtimeSubscriptions() {
             supabaseClient
                 .channel('public-db-changes')
@@ -281,7 +271,6 @@
             setTimeout(() => div.remove(), 5000);
         }
 
-        // Renderizar Catálogo
         function renderProducts() {
             const grid = document.getElementById('products-grid');
             const filtered = currentFilter === 'all' 
@@ -334,7 +323,6 @@
             renderProducts();
         }
 
-        // Gestión del Carrito
         function addToCart(product) {
             const existing = cart.find(item => item.id === product.id);
             if (existing) {
@@ -439,7 +427,6 @@
             }
         }
 
-        // Módulo de Administración
         function openAdminModal() { document.getElementById('admin-login-modal').classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('admin-login-modal').classList.add('hidden'); }
 
