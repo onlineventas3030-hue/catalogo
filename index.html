@@ -184,7 +184,7 @@
 
     <!-- SCRIPT DE LÓGICA Y CONEXIÓN SUPABASE -->
     <script>
-        const SUPABASE_URL = 'https://hohtterveiinsjaqgrrl.supabase.co/rest/v1/';
+        const SUPABASE_URL = 'https://hohtterveiinsjaqgrrl.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvaHR0ZXJ2ZWlpbnNqYXFncnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzODMwNTUsImV4cCI6MjEwNzk1OTA1NX0.hln-Mdy5NKLC_GRNldww302Dgsk4dCg7G8LNu5BEJgY';
         
         const ADMIN_CREDENTIALS = {
@@ -557,7 +557,7 @@
 
         function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
 
-      async function saveProduct() {
+        async function saveProduct() {
             const id = document.getElementById('prod-id').value;
             const name = document.getElementById('prod-name').value.trim();
             const description = document.getElementById('prod-desc').value.trim();
